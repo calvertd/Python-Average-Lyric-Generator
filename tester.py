@@ -11,10 +11,11 @@ def print_menu():
 
 
 def get_artist_songs(input_artist):
-    ### 
+    ### initialise app to enable use of API
     musicbrainzngs.set_useragent("cli_python_music_app","0.1","calvo6@hotmail.co.uk")
 
     try:
+        ### search for albums. Have limited the search results to five albums as it may vary from artist to artist
         result = musicbrainzngs.search_releases(artist=input_artist, limit=5)
         if result["release-list"][0]['artist-credit'][0]['name'].lower() == input_artist.lower():
 
@@ -24,7 +25,7 @@ def get_artist_songs(input_artist):
 
             for album_id in list(album_info):
             
-                #### get tracklist
+                #### get songs via album id
                 recordings = musicbrainzngs.get_release_by_id(album_id, includes=["recordings"])
                 song_list = []
                 t = (recordings["release"]["medium-list"][0]["track-list"])
@@ -36,6 +37,8 @@ def get_artist_songs(input_artist):
                 
                 lyrics_list = []
                 headers = {'content-type': 'application/json'}
+                
+                ### retrieve lyrics for each song using the other API endpoint
                 for s in song_list:
                     url = f'https://api.lyrics.ovh/v1/{input_artist}/{s}'
                     response = requests.get(url, headers=headers)
