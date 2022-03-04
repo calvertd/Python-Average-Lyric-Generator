@@ -1,5 +1,6 @@
 import requests
 import musicbrainzngs
+import re
 
 def print_menu():
     menu_options = {
@@ -58,11 +59,16 @@ def get_artist_songs(input_artist):
 
 
 def find_mean_of_artists_lyrics(list_of_lyrics):
-    lyric_numbers = []
-    for i in range(len(list_of_lyrics)):
-        lyric_numbers.append(len(list_of_lyrics[i]['lyrics']) - list_of_lyrics[i]['lyrics'].count(' '))
-    
-    return sum(lyric_numbers) / len(lyric_numbers)
+    try:
+        lyric_numbers = []
+        for i in range(len(list_of_lyrics)):
+            lyric_numbers.append(len(re.findall(r'\w+', list_of_lyrics[i]['lyrics'])))
+        
+        return sum(lyric_numbers) / len(lyric_numbers)
+
+    except ZeroDivisionError:
+        print("No songs found for artist")
+        return None
 
 
 while(True):
